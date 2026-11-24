@@ -4,12 +4,29 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from rag_review.workflow import ReviewPlan, ask, make_langchain_planner
+from rag_review.workflow import DEFAULT_QUESTION, ReviewPlan, ask, make_langchain_planner
 
 STUDY = Path(__file__).resolve().parents[1] / "demo" / "study"
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_protocol_data_overview_runs_all_supported_checks_locally(self):
+        planner = Mock(side_effect=AssertionError("A standard review does not need a model."))
+        for question in (
+            DEFAULT_QUESTION,
+            "Summarize differences between data and protocol.",
+            "Compare the data against the protocol.",
+        ):
+            with self.subTest(question=question):
+                result = ask(STUDY, question, planner=planner)
+                self.assertEqual(result["status"], "answered")
+                self.assertEqual(
+                    [check["check_id"] for check in result["checks"]],
+                    ["visit3_timing", "visit3_bp", "visit3_chemistry"],
+                )
+                self.assertIn("Visit 3 timing, blood pressure, and chemistry", result["answer"].splitlines()[0])
+        planner.assert_not_called()
+
     def test_general_review_runs_three_cited_checks(self):
         result = ask(STUDY, "Which Visit 3 records need review?")
 
@@ -64,6 +81,7 @@ class WorkflowTests(unittest.TestCase):
             for question in (
                 "Does the data show that the intervention is effective?",
                 "Which Visit 4 records need review?",
+                "Summarize differences between data and protocol for Visit 4.",
                 "What are the inclusion criteria for Visit 3?",
                 "Which Visit 3 records need review under protocol-2?",
                 "Which Site A Visit 3 records need review?",
