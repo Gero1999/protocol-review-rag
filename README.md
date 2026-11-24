@@ -23,6 +23,8 @@ Open the **Visit timing** results and inspect **SUBJ-002**. Its visit was
 recorded on day 12. The applicable version 2 protocol allows days 13–17.
 The app shows the protocol excerpt alongside the source records.
 
+![Visit timing review showing summary counts, flagged records, and the source rows and protocol excerpt for SUBJ-002](docs/images/visit-timing-review.png)
+
 ## Run locally
 
 Use Python 3.12 from the repository root.
