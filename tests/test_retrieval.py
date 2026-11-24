@@ -22,6 +22,8 @@ class RetrievalTests(unittest.TestCase):
                 "| --- | --- |\n"
                 "| Glucose | mmol/L |\n"
                 "| Creatinine | umol/L |\n\n"
+                "## Visit 3 blood pressure\n\n"
+                "Record systolic and diastolic blood pressure.\n\n"
                 "## Applicability and scope\n\n"
                 "Use the protocol assigned at randomization.\n",
                 encoding="utf-8",
@@ -47,6 +49,12 @@ class RetrievalTests(unittest.TestCase):
         ids = [passage["id"] for passage in passages]
         self.assertLess(ids.index("protocol-v2:visit-3-timing"), ids.index("protocol-v1:visit-3-timing"))
         self.assertEqual(passages[0]["version"], "2")
+
+    def test_blood_pressure_abbreviation_matches_the_full_section(self):
+        passages = retrieve(self.study_dir, "Was BP required?", 2)
+        self.assertEqual([passage["id"] for passage in passages], [
+            "protocol-v1:visit-3-blood-pressure", "protocol-v2:visit-3-blood-pressure",
+        ])
 
     def test_source_lookup_preserves_heading_and_filename(self):
         passages = {passage["id"]: passage for passage in load_passages(self.study_dir)}
