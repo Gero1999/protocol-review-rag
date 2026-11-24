@@ -69,6 +69,11 @@ class DemoTests(unittest.TestCase):
             self.assertFalse(app.exception)
             self.assertIn("SUBJ-002", app.json[0].value)
             self.assertIn("Visit 3 timing · protocol-v2.md", [item.label for item in app.expander])
+            mapping, visit = (
+                table.value for table in app.dataframe if "USUBJID" in table.value.columns
+            )
+            self.assertEqual(mapping.at[0, "PROTOCOL_VERSION"], "2")
+            self.assertEqual(visit.at[0, "SVSTDTC"], "2025-01-24")
             app.selectbox(key="review-visit3_timing").select("SUBJ-006").run()
             self.assertIn("Version applicability · amendment-01.md", [item.label for item in app.expander])
 
