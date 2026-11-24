@@ -63,7 +63,7 @@ class WorkflowTests(unittest.TestCase):
         model.with_structured_output.assert_called_once_with(ReviewPlan)
         planner_input = structured.invoke.call_args.args[0]
         self.assertIn("Visit 3 chemistry", planner_input[1][1])
-        self.assertNotIn("AB-008", planner_input[1][1])
+        self.assertNotIn("SUBJ-008", planner_input[1][1])
         self.assertEqual([check["check_id"] for check in result["checks"]], ["visit3_chemistry"])
         self.assertIn("1 without a usable result", result["answer"])
 
@@ -85,7 +85,7 @@ class WorkflowTests(unittest.TestCase):
                 "What are the inclusion criteria for Visit 3?",
                 "Which Visit 3 records need review under protocol-2?",
                 "Which Site A Visit 3 records need review?",
-                "Which Visit 3 records are missing labs for participant AB-005?",
+                "Which Visit 3 records are missing labs for participant SUBJ-005?",
             ):
                 with self.subTest(question=question):
                     self.assertEqual(ask(STUDY, question)["status"], "unsupported")

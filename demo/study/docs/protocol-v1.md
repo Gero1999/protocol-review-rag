@@ -1,8 +1,8 @@
-# Aster Brook study protocol, version 1
+# Synthetic study protocol, version 1
 
 ## Applicability and scope
 
-Aster Brook is a fictional parallel-group study of daily routines in adults.
+This fictional parallel-group study examines daily routines in adults.
 This protocol applies to participants assigned version 1 in the study
 mapping. The mapping also identifies the participants expected at Visit 3.
 Each listed participant is expected to have one planned Visit 3 for review.

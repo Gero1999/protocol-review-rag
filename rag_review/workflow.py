@@ -182,7 +182,7 @@ def ask(study_dir: Path, question: str, planner: Planner | None = None) -> dict:
         return result
     if plan.mode == "records" and re.search(
         r"\b(?:version|protocol|revision|v)[\s-]*(?:[12]|one|two)\b"
-        r"|\b(?:site|arm)\b|\bAB-\d+\b",
+        r"|\b(?:site|arm)\b|\b[A-Z]{2,4}-\d{3}\b",
         question,
         re.I,
     ):

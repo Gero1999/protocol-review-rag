@@ -2,19 +2,19 @@
   "denominator": 30,
   "checks": {
     "visit3_timing": {
-      "outside_window": ["AB-002", "AB-003"],
-      "missing_visit": ["AB-004"],
-      "cannot_assess": ["AB-005", "AB-006", "AB-009"]
+      "outside_window": ["SUBJ-002", "SUBJ-003"],
+      "missing_visit": ["SUBJ-004"],
+      "cannot_assess": ["SUBJ-005", "SUBJ-006", "SUBJ-009"]
     },
     "visit3_bp": {
-      "missing_visit": ["AB-004"],
-      "missing_result": ["AB-007"],
-      "cannot_assess": ["AB-006"]
+      "missing_visit": ["SUBJ-004"],
+      "missing_result": ["SUBJ-007"],
+      "cannot_assess": ["SUBJ-006"]
     },
     "visit3_chemistry": {
-      "missing_visit": ["AB-004"],
-      "missing_result": ["AB-008"],
-      "cannot_assess": ["AB-006"]
+      "missing_visit": ["SUBJ-004"],
+      "missing_result": ["SUBJ-008"],
+      "cannot_assess": ["SUBJ-006"]
     }
   }
 }

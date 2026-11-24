@@ -6,15 +6,15 @@
 
 ## Explore the demo
 
-Aster Brook is a fictional study with **30 synthetic participants**, **two
-protocol versions**, and **three Visit 3 checks** covering timing, blood
-pressure, and chemistry. [Study packet](demo/study/README.md)
+The demo uses **30 synthetic participants**, **two protocol versions**, and
+**three Visit 3 checks** covering timing, blood pressure, and chemistry.
+[Study packet](demo/study/README.md)
 
 > **Try the default question**
 >
 > Summarize discrepancies between the data and the protocol.
 
-Open the **Visit timing** results and inspect **AB-002**. Its visit was
+Open the **Visit timing** results and inspect **SUBJ-002**. Its visit was
 recorded on day 12. The applicable version 2 protocol allows days 13–17.
 The app shows the protocol excerpt alongside the source records.
 

@@ -1,4 +1,4 @@
-# Aster Brook synthetic study
+# Synthetic study packet
 
 The protocol, amendment, participant IDs, dates, and measurements were
 created for this demo. The CSVs cover a small subset of the fields a

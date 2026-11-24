@@ -65,11 +65,11 @@ class DemoTests(unittest.TestCase):
             app.run()
             self.assertFalse(app.exception)
             self.assertEqual([tab.label for tab in app.tabs], ["Visit timing", "Blood pressure", "Chemistry"])
-            app.selectbox(key="review-visit3_timing").select("AB-002").run()
+            app.selectbox(key="review-visit3_timing").select("SUBJ-002").run()
             self.assertFalse(app.exception)
-            self.assertIn("AB-002", app.json[0].value)
+            self.assertIn("SUBJ-002", app.json[0].value)
             self.assertIn("Visit 3 timing · protocol-v2.md", [item.label for item in app.expander])
-            app.selectbox(key="review-visit3_timing").select("AB-006").run()
+            app.selectbox(key="review-visit3_timing").select("SUBJ-006").run()
             self.assertIn("Version applicability · amendment-01.md", [item.label for item in app.expander])
 
 
