@@ -17,6 +17,7 @@ _SOURCES = (
 )
 _HEADING = re.compile(r"^## (.+)$", re.MULTILINE)
 _WORD = re.compile(r"[a-z0-9]+")
+_BLOOD_PRESSURE = re.compile(r"\bblood pressure\b")
 _VERSION = re.compile(r"\b(?:version\s+|v)([12])\b", re.IGNORECASE)
 _STOP_WORDS = frozenset(
     "a an and any are as at be can did do does for from had has have how i in is "
@@ -25,8 +26,10 @@ _STOP_WORDS = frozenset(
 )
 _ALIASES = {
     "amended": "amendment",
-    "changes": "change",
-    "changed": "change",
+    "bp": "bloodpressure",
+    "change": "amendment",
+    "changes": "amendment",
+    "changed": "amendment",
     "laboratory": "chemistry",
     "lab": "chemistry",
     "labs": "chemistry",
@@ -69,8 +72,9 @@ def _documents(study_dir: Path) -> tuple[Document, ...]:
 
 
 def _terms(text: str) -> set[str]:
+    normalized = _BLOOD_PRESSURE.sub("bloodpressure", text.casefold())
     return {
-        _ALIASES.get(word, word) for word in _WORD.findall(text.casefold())
+        _ALIASES.get(word, word) for word in _WORD.findall(normalized)
         if word not in _STOP_WORDS
     }
 

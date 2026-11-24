@@ -24,7 +24,7 @@ from a visit date or the presence of the latest protocol in the corpus.
    section attached to each passage. Keep schedule table rows together
    with their headings.
 2. Select a supported check. Reviewed rules supply the window and test
-   codes. Model output can select check IDs and citations.
+   codes. Model output can select check IDs. The workflow verifies source passages for the selected checks.
 3. Run fixed DuckDB queries against the supplied tables. Count statuses
    over the participants expected to have Visit 3. Separate a late or
    early visit, no matching visit, missing results, and cases where the
