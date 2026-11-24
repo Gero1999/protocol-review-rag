@@ -1,4 +1,4 @@
-# Aster Brook amendment 01
+# Synthetic study amendment 01
 
 ## Visit 3 timing amendment
 

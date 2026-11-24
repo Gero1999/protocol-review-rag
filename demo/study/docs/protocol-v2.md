@@ -1,4 +1,4 @@
-# Aster Brook study protocol, version 2
+# Synthetic study protocol, version 2
 
 ## Applicability and scope
 
