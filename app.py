@@ -7,7 +7,8 @@ import streamlit as st
 
 from rag_review.workflow import DEFAULT_QUESTION, ask, make_langchain_planner
 
-STUDY = Path(__file__).resolve().parent / "demo" / "study"
+ROOT = Path(__file__).resolve().parent
+STUDY = ROOT / "demo" / "study"
 EXAMPLES = (
     "Which Visit 3 records need review?",
     "Which Visit 3 records were outside the window?",
@@ -25,6 +26,12 @@ STATUS_LABELS = {
     "missing_visit": "Missing visit record",
     "missing_result": "Missing result",
     "cannot_assess": "Cannot assess",
+}
+EVIDENCE_LABELS = {
+    "subject": "Study mapping",
+    "sv": "Visits (SV)",
+    "vs": "Vital signs (VS)",
+    "lb": "Laboratory results (LB)",
 }
 
 
@@ -46,10 +53,40 @@ def submit_example(question: str) -> None:
 
 
 def show_examples() -> None:
-    st.caption("Try a question")
-    for left, right in zip(EXAMPLES[::2], EXAMPLES[1::2]):
-        for column, question in zip(st.columns(2), (left, right)):
-            column.button(question, on_click=submit_example, args=(question,), width="stretch")
+    with st.container(key="review-examples"):
+        st.caption("Try a question")
+        for left, right in zip(EXAMPLES[::2], EXAMPLES[1::2]):
+            for column, question in zip(st.columns(2), (left, right)):
+                column.button(question, on_click=submit_example, args=(question,), width="stretch")
+
+
+def review_evidence(check: dict, finding: dict, sources: dict) -> None:
+    with st.container(key=f"participant-evidence-{check['check_id']}"):
+        st.markdown(f"#### {finding['USUBJID']} · {STATUS_LABELS[finding['status']]}")
+        st.write(finding["detail"])
+        rows_panel, protocol_panel = st.columns((3, 2))
+        with rows_panel:
+            st.markdown("**Source rows**")
+            for domain, records in finding["evidence"].items():
+                st.caption(EVIDENCE_LABELS[domain])
+                if records:
+                    rows = [records] if domain == "subject" else records
+                    st.dataframe(rows, hide_index=True, width="stretch")
+                else:
+                    st.caption("No matching rows in the supplied data.")
+            with st.expander("Raw evidence (JSON)"):
+                st.json(finding["evidence"], expanded=True)
+
+        with protocol_panel:
+            st.markdown("**Protocol reference**")
+            source_ids = check["source_ids"]
+            source_id = source_ids.get(finding["protocol_version"], source_ids.get("unknown"))
+            if source_id:
+                source = sources[source_id]
+                with st.expander(f"{source['section']} · {source['document']}", expanded=True):
+                    st.markdown(source["text"])
+            else:
+                st.caption("No protocol passage is available for this record.")
 
 
 def review_check(check: dict, sources: dict) -> None:
@@ -75,18 +112,24 @@ def review_check(check: dict, sources: dict) -> None:
     if not findings:
         st.success("No records need review for this check.")
         return
+    st.markdown("#### Flagged records")
     st.dataframe(
         [
             {
                 "Participant": item["USUBJID"],
-                "Protocol version": item["protocol_version"] or "Unknown",
                 "Status": STATUS_LABELS[item["status"]],
+                "Protocol version": item["protocol_version"] or "Unknown",
                 "Finding": item["detail"],
             }
             for item in findings
         ],
         hide_index=True,
         width="stretch",
+        column_config={
+            "Participant": st.column_config.TextColumn(width=105),
+            "Status": st.column_config.TextColumn(width=145),
+            "Protocol version": st.column_config.TextColumn(width=135),
+        },
     )
     subject = st.selectbox(
         "Inspect supporting records",
@@ -96,82 +139,59 @@ def review_check(check: dict, sources: dict) -> None:
         key=f"review-{check_id}",
     )
     if subject:
-        item = next(item for item in findings if item["USUBJID"] == subject)
-        st.write(item["detail"])
-        source_ids = check["source_ids"]
-        source_id = source_ids.get(item["protocol_version"], source_ids.get("unknown"))
-        if source_id:
-            source = sources[source_id]
-            with st.expander(f"{source['section']} · {source['document']}"):
-                st.markdown(source["text"])
-        st.json(item["evidence"], expanded=True)
+        finding = next(item for item in findings if item["USUBJID"] == subject)
+        review_evidence(check, finding, sources)
 
 
 def review_result(result: dict) -> None:
-    st.subheader(result["question"])
-    if result["status"] != "answered":
-        st.info(result["answer"])
-    else:
-        st.markdown(result["answer"])
+    with st.container(key="review-summary"):
+        st.subheader("Review summary")
+        st.caption(result["question"])
+        if result["status"] != "answered":
+            st.info(result["answer"])
+        else:
+            st.markdown(result["answer"])
 
     sources = {source["id"]: source for source in result["sources"]}
     if result["checks"]:
-        st.subheader("Record review")
-        tabs = st.tabs([CHECK_NAMES[check["check_id"]] for check in result["checks"]])
-        for tab, check in zip(tabs, result["checks"]):
-            with tab:
-                review_check(check, sources)
+        with st.container(key="review-records"):
+            st.subheader("Record review")
+            tabs = st.tabs([CHECK_NAMES[check["check_id"]] for check in result["checks"]])
+            for tab, check in zip(tabs, result["checks"]):
+                with tab:
+                    review_check(check, sources)
 
     if sources:
-        st.subheader("Protocol sources")
-        for source in sources.values():
-            label = f"v{source['version']} · {source['section']} · {source['document']}"
-            with st.expander(label):
-                st.markdown(source["text"])
+        with st.container(key="review-sources"):
+            st.subheader("Protocol sources")
+            for source in sources.values():
+                label = f"v{source['version']} · {source['section']} · {source['document']}"
+                with st.expander(label):
+                    st.markdown(source["text"])
 
 
 def main() -> None:
     st.set_page_config(page_title="Protocol alignment review", layout="wide")
-    st.html("""
-        <style>
-        .stMainBlockContainer { max-width: 70rem; padding-top: 3.25rem; }
-        [data-testid="stMetric"] {
-            border: 1px solid #cfddd5;
-            border-radius: .6rem;
-            padding: .8rem 1rem;
-            background: #f0f5f1;
-        }
-        @media (max-width: 700px) {
-            .stMainBlockContainer { padding-top: 2.25rem; }
-            [data-testid="stMetric"] { padding: .55rem; }
-            [class*="st-key-review-metrics-"] [data-testid="stHorizontalBlock"] {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: .5rem;
-            }
-            [class*="st-key-review-metrics-"] [data-testid="stColumn"] {
-                width: 100%;
-                min-width: 0;
-            }
-        }
-        </style>
-    """)
-    st.title("Protocol alignment review")
-    st.write("Compare the study protocol with recorded visits, vital signs, and lab results.")
-    st.caption("Demo study · Synthetic records · Visit 3")
-    mode = planner_choice()
+    st.html(ROOT / "styles" / "review.css")
+    with st.container(key="review-header"):
+        st.caption("Synthetic clinical study")
+        st.title("Protocol alignment review")
+        st.write("Compare Visit 3 timing, blood pressure, and chemistry with the applicable protocol.")
 
-    st.session_state.setdefault("question", DEFAULT_QUESTION)
-    with st.form("study-question"):
-        question = st.text_input(
-            "Ask about the study",
-            value=None,
-            key="question",
-            placeholder=DEFAULT_QUESTION,
-            max_chars=500,
-        )
-        submitted = st.form_submit_button("Review study", type="primary")
-    show_examples()
+    with st.container(key="review-intake"):
+        mode = planner_choice()
+        st.session_state.setdefault("question", DEFAULT_QUESTION)
+        with st.form("study-question", border=False):
+            field, action = st.columns((4, 1), vertical_alignment="bottom")
+            question = field.text_input(
+                "Ask about the study",
+                value=None,
+                key="question",
+                placeholder=DEFAULT_QUESTION,
+                max_chars=500,
+            )
+            submitted = action.form_submit_button("Review study", type="primary", width="stretch")
+        show_examples()
 
     pending = st.session_state.pop("pending_question", None)
     requested = (question or "").strip() if submitted else pending

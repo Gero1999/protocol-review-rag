@@ -1,0 +1,181 @@
+.stMainBlockContainer {
+    max-width: 72rem;
+    padding-top: 3.5rem;
+    padding-bottom: 4rem;
+}
+
+.st-key-review-header {
+    padding: clamp(1.45rem, 4vw, 2.7rem);
+    border: 1px solid #214942;
+    border-radius: 1rem;
+    background: radial-gradient(ellipse at top right, #275447, transparent 65%),
+                #102f2d;
+}
+
+.st-key-review-header h1 {
+    padding: 0;
+    color: #f4fbf8;
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -.04em;
+}
+
+.st-key-review-header p {
+    max-width: 45rem;
+    margin-bottom: 0;
+    color: #daece5;
+}
+
+.st-key-review-header [data-testid="stCaptionContainer"] {
+    opacity: 1;
+}
+
+.st-key-review-header [data-testid="stCaptionContainer"] p {
+    color: #a9d6c7;
+    font-weight: 650;
+    letter-spacing: .035em;
+}
+
+:is(.st-key-review-intake, .st-key-review-summary,
+    .st-key-review-records, .st-key-review-sources) {
+    padding: 1.35rem 1.55rem;
+    border: 1px solid #d9e5e0;
+    border-radius: .85rem;
+    background: #ffffff;
+}
+
+.st-key-review-intake [data-testid="stForm"] {
+    padding: 0;
+}
+
+.st-key-review-examples button {
+    min-height: 2.5rem;
+    justify-content: flex-start;
+    padding: .55rem .75rem;
+    border-color: #e0eae5;
+    background: #f5f8f6;
+    color: #284e45;
+    text-align: left;
+}
+
+.st-key-review-examples button:hover {
+    border-color: #7fae9d;
+    background: #eef6f1;
+}
+
+.st-key-review-examples button [data-testid="stMarkdownContainer"] {
+    white-space: normal;
+    overflow: visible;
+}
+
+.st-key-review-examples button [data-testid="stMarkdownContainer"] p {
+    font-size: .875rem;
+    line-height: 1.35;
+    white-space: normal;
+}
+
+:is(.st-key-review-intake, .st-key-review-records) button:focus-visible {
+    outline: 2px solid #427c69;
+    outline-offset: 2px;
+}
+
+:is(.st-key-review-summary, .st-key-review-records, .st-key-review-sources) h3 {
+    padding: 0;
+    font-size: 1.45rem;
+    letter-spacing: -.02em;
+}
+
+.st-key-review-records [role="tab"] {
+    font-weight: 600;
+}
+
+[class*="st-key-review-metrics-"] [data-testid="stMetric"] {
+    height: 100%;
+    padding: .75rem .9rem;
+    border: 1px solid #dce8e2;
+    border-radius: .65rem;
+    background: #f6f9f7;
+}
+
+[class*="st-key-review-metrics-"] [data-testid="stMetricValue"] {
+    font-size: 1.7rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+}
+
+[class*="st-key-review-metrics-"] [data-testid="stColumn"]:nth-child(2) [data-testid="stMetric"] {
+    border-color: #d6e8df;
+    background: #edf7f0;
+}
+
+[class*="st-key-review-metrics-"] [data-testid="stColumn"]:nth-child(3) [data-testid="stMetric"] {
+    border-color: #e9dfc9;
+    background: #fcf6ea;
+}
+
+[class*="st-key-review-metrics-"] [data-testid="stColumn"]:nth-child(4) [data-testid="stMetric"] {
+    border-color: #dce4ed;
+    background: #f1f5f9;
+}
+
+[class*="st-key-participant-evidence-"] {
+    padding: 1.1rem;
+    border: 1px solid #dce8e2;
+    border-radius: .7rem;
+    background: #f7faf8;
+}
+
+.st-key-review-records h4 {
+    padding: 0;
+    font-size: 1rem;
+}
+
+@media (max-width: 700px) {
+    .stMainBlockContainer {
+        padding-inline: .9rem;
+        padding-top: 2.8rem;
+    }
+
+    :is(.st-key-review-intake, .st-key-review-summary,
+        .st-key-review-records, .st-key-review-sources, [class*="st-key-participant-evidence-"]) {
+        padding: 1rem;
+    }
+
+    .st-key-review-intake [data-testid="stForm"] [data-testid="stHorizontalBlock"],
+    [class*="st-key-participant-evidence-"] [data-testid="stHorizontalBlock"] {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: .6rem;
+    }
+
+    :is(.st-key-review-examples, [class*="st-key-review-metrics-"]) [data-testid="stHorizontalBlock"] {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .55rem;
+    }
+
+    .st-key-review-examples button {
+        min-height: 3.65rem;
+    }
+
+    .st-key-review-examples [data-testid="stColumn"] [data-testid="stElementContainer"] {
+        flex: 1;
+    }
+
+    .st-key-review-examples :is([data-testid="stButton"], button) {
+        height: 100%;
+    }
+
+    :is(.st-key-review-intake, [class*="st-key-review-metrics-"],
+        [class*="st-key-participant-evidence-"]) [data-testid="stColumn"] {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 360px) {
+    .st-key-review-examples [data-testid="stHorizontalBlock"] {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
