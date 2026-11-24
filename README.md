@@ -40,3 +40,15 @@ local. `OPENAI_MODEL` can override the default model.
 The [Aster Brook study](demo/study/README.md) uses original documents and
 synthetic, SDTM-style records. The [design](docs/design.md) explains the
 scope and assumptions of the review.
+
+## Verify the findings
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The supplied study has 30 participants expected at Visit 3. The timing
+check finds two visits outside the window, one missing visit record, and
+three records that cannot be assessed. The [expected findings](demo/study/expected_findings.json)
+list the affected participants for all three checks. The test suite compares
+them with the results from the same question and workflow used in the app.

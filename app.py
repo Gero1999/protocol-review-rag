@@ -98,6 +98,12 @@ def review_check(check: dict, sources: dict) -> None:
     if subject:
         item = next(item for item in findings if item["USUBJID"] == subject)
         st.write(item["detail"])
+        source_ids = check["source_ids"]
+        source_id = source_ids.get(item["protocol_version"], source_ids.get("unknown"))
+        if source_id:
+            source = sources[source_id]
+            with st.expander(f"{source['section']} · {source['document']}"):
+                st.markdown(source["text"])
         st.json(item["evidence"], expanded=True)
 
 
