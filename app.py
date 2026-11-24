@@ -5,7 +5,7 @@ from pathlib import Path
 
 import streamlit as st
 
-from rag_review.workflow import ask, make_langchain_planner
+from rag_review.workflow import DEFAULT_QUESTION, ask, make_langchain_planner
 
 STUDY = Path(__file__).resolve().parent / "demo" / "study"
 EXAMPLES = (
@@ -34,8 +34,8 @@ def planner_choice():
             "Question routing",
             ["Offline", "OpenAI"],
             horizontal=True,
-            help="Offline uses local retrieval and rules. OpenAI interprets the question using "
-            "protocol excerpts. The DuckDB checks run locally in either mode.",
+            help="The default comparison uses local routing. For other questions, OpenAI interprets "
+            "the question using protocol excerpts. The DuckDB checks run locally in either mode.",
         )
     return "Offline"
 
@@ -161,18 +161,20 @@ def main() -> None:
     st.caption("Demo study · Synthetic records · Visit 3")
     mode = planner_choice()
 
+    st.session_state.setdefault("question", DEFAULT_QUESTION)
     with st.form("study-question"):
         question = st.text_input(
             "Ask about the study",
+            value=None,
             key="question",
-            placeholder="Which Visit 3 records need review?",
+            placeholder=DEFAULT_QUESTION,
             max_chars=500,
         )
         submitted = st.form_submit_button("Review study", type="primary")
     show_examples()
 
     pending = st.session_state.pop("pending_question", None)
-    requested = question.strip() if submitted else pending
+    requested = (question or "").strip() if submitted else pending
     if submitted and not requested:
         st.warning("Enter a question or choose an example.")
     if requested:

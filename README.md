@@ -15,22 +15,25 @@ python -m pip install -r requirements.txt
 python -m streamlit run app.py
 ```
 
-Open the local URL Streamlit prints and try **Which Visit 3 records need
-review?** Select a check and a flagged participant to inspect the evidence.
-Try **What changed for Visit 3 in protocol version 2?** to see the protocol
-comparison without running a data check.
+Open the local URL Streamlit prints and submit the prefilled question,
+**Summarize discrepancies between the data and the protocol**. It runs all
+three supported checks for Visit 3 timing, blood pressure, and chemistry.
+Select a check and a flagged participant to inspect the evidence. For a
+follow-up, try **Which Visit 3 records need review?** or **What changed for
+Visit 3 in protocol version 2?**
 
 The default mode runs locally and does not require a model or API key.
 Setting `OPENAI_API_KEY` on the server enables optional OpenAI question
-routing. That mode sends the question and retrieved fictional protocol
-excerpts to the model. The supplied CSV rows and the DuckDB checks stay
-local. `OPENAI_MODEL` can override the default model.
+routing for questions outside the standard comparison. That mode sends the
+question and retrieved fictional protocol excerpts to the model. The supplied
+CSV rows and the DuckDB checks stay local. `OPENAI_MODEL` can override the
+default model.
 
 ## How it works
 
 - LangChain retrieves complete protocol sections with document and version
   labels.
-- A local router or a structured model response selects one of three
+- A local router or a structured model response selects from three
   predefined Visit 3 checks. The [reviewed study rules](demo/study/rules.json)
   supply the window and test codes.
 - DuckDB checks the mapped cohort and returns counts and flagged records.

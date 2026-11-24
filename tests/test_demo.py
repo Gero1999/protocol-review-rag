@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from streamlit.testing.v1 import AppTest
 
-from rag_review.workflow import ask
+from rag_review.workflow import DEFAULT_QUESTION, ask
 from scripts.generate_study import HEADERS, generate
 
 
@@ -28,7 +28,7 @@ class DemoTests(unittest.TestCase):
 
     def test_review_matches_expected_records_and_links_both_versions(self):
         expected = json.loads((STUDY / "expected_findings.json").read_text(encoding="utf-8"))
-        result = ask(STUDY, "Which Visit 3 records need review?")
+        result = ask(STUDY, DEFAULT_QUESTION)
         self.assertEqual(result["status"], "answered")
         self.assertEqual({check["check_id"] for check in result["checks"]}, set(expected["checks"]))
         sources = {source["id"]: source for source in result["sources"]}
@@ -59,7 +59,9 @@ class DemoTests(unittest.TestCase):
         with patch.dict(os.environ, {"OPENAI_API_KEY": ""}):
             app = AppTest.from_file(str(ROOT / "app.py"))
             app.run()
-            next(button for button in app.button if button.label == "Which Visit 3 records need review?").click()
+            self.assertEqual(app.text_input(key="question").value, DEFAULT_QUESTION)
+            self.assertIn("Which Visit 3 records need review?", [button.label for button in app.button])
+            next(button for button in app.button if button.label == "Review study").click()
             app.run()
             self.assertFalse(app.exception)
             self.assertEqual([tab.label for tab in app.tabs], ["Visit timing", "Blood pressure", "Chemistry"])
