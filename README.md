@@ -1,6 +1,11 @@
 # Protocol to SDTM Review
 
-**Trace a flagged study record back to the protocol requirement and the data behind it.**
+**Review clinical study records against their protocol and trace each finding to its evidence.**
+
+The goal is to reuse this workflow across studies with versioned protocol
+documents, mapped datasets, and reviewed rules. The current app runs on
+one bundled synthetic study. New document layouts, table mappings, or
+requirements can require code changes.
 
 [Run locally](#run-locally) · [Architecture](#architecture) · [Verify the findings](#verify-the-findings)
 
@@ -39,20 +44,21 @@ protocol excerpts. Dataset rows stay local.
 
 ```mermaid
 flowchart LR
-    Protocol["Versioned protocol and amendment"] --> Retrieval["Retrieve cited passages"]
+    Protocol["Versioned protocol documents"] --> Retrieval["Retrieve cited passages"]
     Question["Review question"] --> Retrieval
-    Retrieval --> Plan["Select reviewed checks"]
+    Retrieval --> Plan["Select supported checks"]
     Plan --> SQL["Run fixed SQL"]
-    Records["SDTM-style CSVs and cohort mapping"] --> SQL
+    Rules["Reviewed study rules"] --> SQL
+    Records["Mapped study tables"] --> SQL
     SQL --> Review["Findings, citations, and source rows"]
 ```
 
-| Decision | Why it fits |
+| Component | Why it fits the review workflow |
 | --- | --- |
-| **LangChain retrieves complete Markdown sections** | Local lexical search fits a small corpus and keeps each schedule table with its version and citation. |
-| **Pydantic validates optional model routing** | A structured model response can select only supported checks. Reviewed rules supply the visit windows and test codes. |
-| **DuckDB runs fixed SQL** | The joins start from the expected cohort, so missing visits stay in the denominator. The same files and rules reproduce the same findings. |
-| **Streamlit shows the evidence** | A reviewer can inspect the flagged records and the applicable protocol passage in the same session. |
+| **LangChain** | Connects question routing to retrieved protocol sections with source metadata. Version and section citations let reviewers verify which requirement applies as protocols change. |
+| **Pydantic** | Validates the optional model's choice against a defined set of checks. Each study's reviewed rules supply the parameters used in those checks. |
+| **DuckDB** | Embedded SQL joins mapped tables, evaluates rules, and returns the rows behind each finding. Reviewers can inspect and reproduce the logic locally without running a database server. |
+| **Streamlit** | Gives reviewers a browser interface for inspecting findings alongside protocol excerpts and source rows. The checks can also run directly from Python for testing. |
 
 The review flags absences in the supplied data and records it cannot assess.
 Whether a flagged record represents a protocol deviation requires follow-up.

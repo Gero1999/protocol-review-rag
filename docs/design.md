@@ -1,9 +1,18 @@
 # Protocol to SDTM review
 
-A clinical study reviewer asks which Visit 3 records need review. The app
-shows the governing protocol passage, the check it ran, and the data behind
-each finding. The demo uses an original protocol, an amendment, and
-synthetic CSVs modeled on a subset of the SDTM SV, VS, and LB domains.
+The review workflow compares clinical study records with the applicable
+protocol. A finding links to the governing passage, the check that ran, and
+the supporting data. The current demo uses an original protocol, an
+amendment, and synthetic CSVs modeled on a subset of the SDTM SV, VS, and
+LB domains.
+
+## Study setup
+
+Each study needs versioned protocol sources, subject and visit mappings,
+and reviewed checks that match the supplied tables. The current app binds
+these inputs to the bundled study. Supporting a different document layout,
+data schema, or protocol requirement may require changes to retrieval,
+mapping, or validation code.
 
 ## First study
 
