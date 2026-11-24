@@ -1,0 +1,18 @@
+{
+  "versions": {
+    "1": {
+      "visitnum": 3,
+      "min_day": 12,
+      "max_day": 16,
+      "bp_codes": ["SYSBP", "DIABP"],
+      "chemistry_codes": ["GLUC", "CREAT"]
+    },
+    "2": {
+      "visitnum": 3,
+      "min_day": 13,
+      "max_day": 17,
+      "bp_codes": ["SYSBP", "DIABP"],
+      "chemistry_codes": ["GLUC", "CREAT"]
+    }
+  }
+}
