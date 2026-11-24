@@ -1,7 +1,42 @@
 # Protocol to SDTM Review
 
-A portfolio project for reviewing how fictional clinical trial records align
-with the study protocol. It pairs retrieval of versioned protocol passages
-with reproducible checks against synthetic visit, vital-sign, and lab records.
+Ask how a fictional clinical study's records align with its protocol. The
+demo finds the governing requirements, runs reproducible checks, and shows
+the source rows behind each finding.
 
-The [design](docs/design.md) describes the first study, scope, and workflow.
+## Run the demo
+
+Use Python 3.12 from the repository root.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
+
+Open the local URL Streamlit prints and try **Which Visit 3 records need
+review?** Select a check and a flagged participant to inspect the evidence.
+Try **What changed for Visit 3 in protocol version 2?** to see the protocol
+comparison without running a data check.
+
+The default mode runs locally and does not require a model or API key.
+Setting `OPENAI_API_KEY` on the server enables optional OpenAI question
+routing. That mode sends the question and retrieved fictional protocol
+excerpts to the model. The supplied CSV rows and the DuckDB checks stay
+local. `OPENAI_MODEL` can override the default model.
+
+## How it works
+
+- LangChain retrieves complete protocol sections with document and version
+  labels.
+- A local router or a structured model response selects one of three
+  predefined Visit 3 checks. The [reviewed study rules](demo/study/rules.json)
+  supply the window and test codes.
+- DuckDB checks the mapped cohort and returns counts and flagged records.
+  Results distinguish discrepancies, missing records, and records that
+  cannot be assessed.
+
+The [Aster Brook study](demo/study/README.md) uses original documents and
+synthetic, SDTM-style records. The [design](docs/design.md) explains the
+scope and assumptions of the review.
