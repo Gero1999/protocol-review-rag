@@ -1,6 +1,12 @@
 # Protocol to SDTM Review
 
-**Review clinical study records against their protocol and trace each finding to its evidence.**
+**Review clinical study data against versioned protocols with LangChain RAG and reproducible SQL checks.**
+
+With OpenAI enabled, LangChain retrieves relevant protocol excerpts and passes
+them to the model to generate a structured review plan. This is the
+retrieval-augmented generation (RAG) step. DuckDB runs the selected checks
+locally and returns the source rows. The default offline mode uses the same
+retrieval with rule-based question routing.
 
 The goal is to reuse this workflow across studies with versioned protocol
 documents, mapped datasets, and reviewed rules. The current app runs on
